@@ -1,0 +1,8 @@
+[Container]
+Image=alpine:edge
+ContainerName=hermes
+PublishPort=9112:9112
+Volume=hermes-data:/data
+Volume=/etc/localtime:/etc/localtime:ro
+Exec=sleep infinity
+PodmanArgs=--pull=newer
