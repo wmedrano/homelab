@@ -1,0 +1,12 @@
+[Container]
+Image=docker.io/nousresearch/hermes-agent:latest
+ContainerName=hermes
+PublishPort=8642:8642
+PublishPort=9119:9119
+Volume=hermes-data:/opt/data
+Environment=HERMES_DASHBOARD=1
+Exec=gateway run
+PodmanArgs=--pull=newer
+
+[Install]
+WantedBy=default.target

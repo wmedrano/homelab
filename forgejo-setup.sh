@@ -26,7 +26,7 @@ else
 fi
 
 systemctl --user daemon-reload
-systemctl --user enable --now forgejo
+systemctl --user start forgejo.service
 
 sleep 3
 
