@@ -32,8 +32,6 @@ This replaces manual `podman run` commands with integrated systemd management fo
 
 ### Forgejo
 
-### Hermes
-
 Runs as a rootless Podman container managed by systemd via Quadlet.
 
 - **Configuration**: `forgejo.container` (Podman quadlet)
@@ -41,25 +39,13 @@ Runs as a rootless Podman container managed by systemd via Quadlet.
 - **Service**: `systemctl --user status forgejo`
 - **Caddy**: Proxies `git.wmedrano.dev` → `localhost:2223`
 
-### Hermes
-
-A container for logging in and installing software, exposing port 9112.
-
-- **Configuration**: `hermes.container` (Podman quadlet)
-- **Container Name**: `hermes`
-- **Service**: `systemctl --user status hermes`
-- **Ports**:
-  - Host Port 9112 → Container Port 9112
-- **Access**: `podman exec -it hermes /bin/bash`
-
-For reproducible deployment, run `init-preprequisites.sh` (sudo required) then either `forgejo-setup.sh` or `hermes-setup.sh` (user-level).
+For reproducible deployment, run `init-preprequisites.sh` (sudo required) then `forgejo-setup.sh` (user-level).
 
 #### Port Reference
 | Purpose | Host Port | Container Port |
 |---------|-----------|----------------|
 | SSH (Git) | 2222 | 2222 |
 | HTTP (Web) | 2223 | 3000 |
-| Hermes Service | 9112 | 9112 |
 
 #### Git Clone URLs
 **SSH:**
