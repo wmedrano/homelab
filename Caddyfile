@@ -1,0 +1,22 @@
+{
+	admin "unix//run/caddy/admin.socket"
+}
+
+blog.wmedrano.dev, www.wmedrano.dev, wmedrano.dev {
+	root * /var/www/wmedrano.dev
+	file_server browse
+	log
+}
+
+git.wmedrano.dev {
+	reverse_proxy localhost:2223
+	log
+}
+
+hermes.wmedrano.dev {
+	basicauth / {
+		hermes $2a$14$QlHNdhv.EPwfySwvkObdQuv0TqL9321w9zsB/wilksVytCOcYRRlC
+	}
+	reverse_proxy 127.0.0.1:9119
+	log
+}
