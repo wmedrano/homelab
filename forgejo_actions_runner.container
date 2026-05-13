@@ -1,7 +1,7 @@
 [Container]
 Image=data.forgejo.org/forgejo/runner:12
-ContainerName=act_runner
-Volume=act-runner-data:/data
+ContainerName=forgejo_actions_runner
+Volume=forgejo-actions-runner-data:/data
 Volume=/run/user/1000/podman/podman.sock:/run/podman/podman.sock:z
 Environment=DOCKER_HOST=unix:///run/podman/podman.sock
 PodmanArgs=--pull=newer

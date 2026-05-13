@@ -7,9 +7,9 @@ set -euo pipefail
 # Prerequisite: Forgejo must already be running (bash forgejo-setup.sh)
 
 QUADLET_DIR="$HOME/.config/containers/systemd"
-CONTAINER_FILE="act_runner.container"
+CONTAINER_FILE="forgejo_actions_runner.container"
 CONFIG_FILE="runner-config.yml"
-VOLUME_NAME="act-runner-data"
+VOLUME_NAME="forgejo-actions-runner-data"
 
 if podman volume exists "$VOLUME_NAME"; then
     :
@@ -36,7 +36,7 @@ else
 fi
 
 systemctl --user daemon-reload
-systemctl --user start act_runner.service
+systemctl --user start forgejo_actions_runner.service
 
 sleep 3
 
@@ -46,4 +46,4 @@ echo ""
 echo "To register the runner with your Forgejo instance:"
 echo "  1. Go to https://git.wmedrano.dev -> Site Administration -> Actions -> Runners -> Create new runner"
 echo "  2. Copy the registration token"
-echo "  3. Run: podman exec act_runner forgejo-runner register --config /data/runner-config.yml --instance https://git.wmedrano.dev --token <TOKEN>"
+echo "  3. Run: podman exec forgejo_actions_runner forgejo-runner register --config /data/runner-config.yml --instance https://git.wmedrano.dev --token <TOKEN>"

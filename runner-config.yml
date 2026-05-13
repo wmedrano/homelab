@@ -1,5 +1,5 @@
 # Forgejo Runner Configuration
-# Place in act-runner-data volume at /data/runner-config.yml
+# Place in forgejo-actions-runner-data volume at /data/runner-config.yml
 
 runner:
   name: homelab-runner
@@ -9,7 +9,7 @@ runner:
   timeout: 3h
   shutdown_timeout: 0s
   labels:
-    - "ubuntu-latest:docker://node:22-bookworm"
+    - "ubuntu-latest:docker://debian:bookworm"
 
 cache:
   enabled: true

@@ -66,12 +66,12 @@ CI/CD runner for Forgejo Actions, using the Podman socket (no DinD).
 After deployment, register the runner with Forgejo:
 1. Go to **Site Administration → Actions → Runners** on `git.wmedrano.dev` and create a new runner
 2. Copy the registration token
-3. Run: `podman exec act_runner forgejo-runner register --config /data/runner-config.yml --instance https://git.wmedrano.dev --token <TOKEN>`
+3. Run: `podman exec forgejo_actions_runner forgejo-runner register --config /data/runner-config.yml --instance https://git.wmedrano.dev --token <TOKEN>`
 
 ### Manage
 
 ```bash
-systemctl --user status act_runner   # status
-podman logs act_runner               # logs
-systemctl --user restart act_runner  # restart
+systemctl --user status forgejo_actions_runner   # status
+podman logs forgejo_actions_runner               # logs
+systemctl --user restart forgejo_actions_runner  # restart
 ```
