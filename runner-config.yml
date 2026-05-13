@@ -1,0 +1,35 @@
+# Forgejo Runner Configuration
+# Place in act-runner-data volume at /data/runner-config.yml
+
+runner:
+  name: homelab-runner
+  file: .runner
+  capacity: 1
+  env_file: .env
+  timeout: 3h
+  shutdown_timeout: 0s
+  labels:
+    - "ubuntu-latest:docker://node:22-bookworm"
+
+cache:
+  enabled: true
+  dir: /data/cache
+  host: ""
+  port: 0
+  external_server: ""
+
+container:
+  network: ""
+  enable_ipv6: false
+  options: ""
+  workdir_parent: /data/workspace
+  valid_volumes: []
+  docker_hosts: []
+  force_pull: false
+  force_rebuild: false
+
+log:
+  level: info
+
+hosts:
+  "https://git.wmedrano.dev": {}
