@@ -62,10 +62,10 @@ CI/CD runner for Forgejo Actions, using the Podman socket (no DinD).
 ### Deploy
 
 1. Go to **Site Administration → Actions → Runners** on `git.wmedrano.dev` and create a new runner
-2. Copy the registration token
-3. Run: `bash runner-setup.sh <TOKEN>`
+2. Copy the registration token and UUID
+3. Run: `bash runner-setup.sh <TOKEN> <UUID>`
 
-The token is written into `runner-config.yml` in the data volume via the v12 `connections` block — no separate `register` step needed.
+The token and UUID are written into `runner-config.yml` in the data volume via the v12 `server.connections` block — no separate `register` step needed.
 
 ### Manage
 

@@ -7,22 +7,23 @@ set -euo pipefail
 # Prerequisites:
 #   - Forgejo must already be running (bash forgejo-setup.sh)
 #   - podman.socket user service must be active
-#   - A runner token from https://git.wmedrano.dev Site Administration → Actions → Runners
+#   - A runner token and UUID from https://git.wmedrano.dev Site Administration -> Actions -> Runners
 #
 # Usage:
-#   bash runner-setup.sh <TOKEN>
+#   bash runner-setup.sh <TOKEN> <UUID>
 #
-# The token is written into runner-config.yml inside the data volume
-# (the v12 connections block), so the daemon can authenticate on startup.
+# The token and UUID are written into runner-config.yml inside the data volume
+# (the v12 server.connections block), so the daemon can authenticate on startup.
 
-if [[ $# -lt 1 ]]; then
-    echo "Usage: bash runner-setup.sh <RUNNER_TOKEN>"
+if [[ $# -lt 2 ]]; then
+    echo "Usage: bash runner-setup.sh <RUNNER_TOKEN> <RUNNER_UUID>"
     echo ""
-    echo "Get a token from: https://git.wmedrano.dev -> Site Administration -> Actions -> Runners -> Create new runner"
+    echo "Get token + UUID from: https://git.wmedrano.dev -> Site Administration -> Actions -> Runners -> Create new runner"
     exit 1
 fi
 
 TOKEN="$1"
+UUID="$2"
 QUADLET_DIR="$HOME/.config/containers/systemd"
 CONTAINER_FILE="forgejo_actions_runner.container"
 CONFIG_FILE="runner-config.yml"
@@ -33,12 +34,15 @@ if ! podman volume exists "$VOLUME_NAME" 2>/dev/null; then
     podman volume create "$VOLUME_NAME"
 fi
 
-# --- Install runner-config.yml into the volume with the token filled in ---
+# --- Install runner-config.yml into the volume with token + uuid filled in ---
 VOLUME_DIR="$(podman volume inspect "$VOLUME_NAME" --format '{{.Mountpoint}}')"
 
-# Use a temp file so we can substitute the token without sed escaping issues
+# Use a temp file so we can substitute token + uuid without sed escaping issues
 TMP_CONFIG="$(mktemp)"
-sed "s|token: \"\".*# Fill in your runner token before deploying|token: ${TOKEN}|" "$CONFIG_FILE" > "$TMP_CONFIG"
+sed \
+  -e "s|uuid: \"\".*# Fill in UUID from Forgejo admin runner page|uuid: ${UUID}|" \
+  -e "s|token: \"\".*# Fill in your runner token before deploying|token: ${TOKEN}|" \
+  "$CONFIG_FILE" > "$TMP_CONFIG"
 
 # podman unshare gives us access to the rootless volume mountpoint
 podman unshare cp "$TMP_CONFIG" "$VOLUME_DIR/runner-config.yml"

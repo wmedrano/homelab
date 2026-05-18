@@ -1,10 +1,12 @@
 # Forgejo Runner Configuration
 # Place in forgejo-actions-runner-data volume at /data/runner-config.yml
 #
-# In v12+, connections are declared in this file directly (the `register`
-# command is deprecated).  Fill in the token before deploying:
+# In v12+, connections are declared under server.connections in the config
+# file directly (the `register` command is deprecated).  Fill in the token
+# and uuid before deploying:
 #
-#   connections.git-wmedrano.token: <your-runner-token>
+#   server.connections.forgejo.token: <your-runner-token>
+#   server.connections.forgejo.uuid: <uuid-from-forgejo-admin>
 
 runner:
   name: homelab-runner
@@ -36,7 +38,9 @@ container:
 log:
   level: info
 
-connections:
-  git-wmedrano:
-    url: https://git.wmedrano.dev/
-    token: ""  # Fill in your runner token before deploying
+server:
+  connections:
+    forgejo:
+      url: https://git.wmedrano.dev/
+      uuid: ""  # Fill in UUID from Forgejo admin runner page
+      token: ""  # Fill in your runner token before deploying
