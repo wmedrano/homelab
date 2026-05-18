@@ -79,6 +79,7 @@ server:
 EOF
 
 podman unshare cp "$TMP_CONFIG" "$VOLUME_DIR/runner-config.yml"
+podman unshare chmod 644 "$VOLUME_DIR/runner-config.yml"
 rm -f "$TMP_CONFIG"
 
 # --- Install quadlet ---
