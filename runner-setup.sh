@@ -26,7 +26,6 @@ TOKEN="$1"
 UUID="$2"
 QUADLET_DIR="$HOME/.config/containers/systemd"
 CONTAINER_FILE="forgejo_actions_runner.container"
-CONFIG_FILE="runner-config.yml"
 VOLUME_NAME="forgejo-actions-runner-data"
 
 # --- Create data volume if it doesn't exist ---
@@ -34,19 +33,48 @@ if ! podman volume exists "$VOLUME_NAME" 2>/dev/null; then
     podman volume create "$VOLUME_NAME"
 fi
 
-# --- Install runner-config.yml into the volume with token + uuid filled in ---
+# --- Write runner-config.yml into the volume with token + uuid ---
 VOLUME_DIR="$(podman volume inspect "$VOLUME_NAME" --format '{{.Mountpoint}}')"
 
-# Use a temp file so we can substitute token + uuid without sed escaping issues
-TMP_CONFIG="$(mktemp)"
-sed \
-  -e "s|uuid: \"\".*# Fill in UUID from Forgejo admin runner page|uuid: ${UUID}|" \
-  -e "s|token: \"\".*# Fill in your runner token before deploying|token: ${TOKEN}|" \
-  "$CONFIG_FILE" > "$TMP_CONFIG"
+# Generate config with substitution — avoids fragile sed patterns on the template
+podman unshare bash -c "cat > '$VOLUME_DIR/runner-config.yml'" << EOF
+runner:
+  name: homelab-runner
+  file: .runner
+  capacity: 1
+  env_file: .env
+  timeout: 3h
+  shutdown_timeout: 0s
+  labels:
+    - "ubuntu-latest:docker://debian:bookworm"
 
-# podman unshare gives us access to the rootless volume mountpoint
-podman unshare cp "$TMP_CONFIG" "$VOLUME_DIR/runner-config.yml"
-rm -f "$TMP_CONFIG"
+cache:
+  enabled: true
+  dir: /data/cache
+  host: ""
+  port: 0
+  external_server: ""
+
+container:
+  network: ""
+  enable_ipv6: false
+  options: ""
+  workdir_parent: /data/workspace
+  valid_volumes: []
+  docker_hosts: []
+  force_pull: false
+  force_rebuild: false
+
+log:
+  level: info
+
+server:
+  connections:
+    forgejo:
+      url: https://git.wmedrano.dev/
+      uuid: ${UUID}
+      token: ${TOKEN}
+EOF
 
 # --- Install quadlet ---
 mkdir -p "$QUADLET_DIR"
