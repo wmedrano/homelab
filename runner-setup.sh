@@ -36,8 +36,10 @@ fi
 # --- Write runner-config.yml into the volume with token + uuid ---
 VOLUME_DIR="$(podman volume inspect "$VOLUME_NAME" --format '{{.Mountpoint}}')"
 
-# Generate config with substitution — avoids fragile sed patterns on the template
-podman unshare bash -c "cat > '$VOLUME_DIR/runner-config.yml'" << EOF
+# Write config to a temp file first (avoids quoting issues with heredoc
+# through podman unshare), then copy into the volume using podman unshare.
+TMP_CONFIG="$(mktemp)"
+cat > "$TMP_CONFIG" << EOF
 runner:
   name: homelab-runner
   file: .runner
@@ -75,6 +77,9 @@ server:
       uuid: ${UUID}
       token: ${TOKEN}
 EOF
+
+podman unshare cp "$TMP_CONFIG" "$VOLUME_DIR/runner-config.yml"
+rm -f "$TMP_CONFIG"
 
 # --- Install quadlet ---
 mkdir -p "$QUADLET_DIR"
