@@ -48,7 +48,7 @@ runner:
   timeout: 3h
   shutdown_timeout: 0s
   labels:
-    - "ubuntu-latest:docker://ubuntu:latest"
+    - "ubuntu-latest:docker://node:latest"
 
 cache:
   enabled: true
