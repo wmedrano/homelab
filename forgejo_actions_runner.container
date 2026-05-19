@@ -5,6 +5,7 @@ Volume=forgejo-actions-runner-data:/data
 Volume=/run/user/1000/podman/podman.sock:/run/podman/podman.sock:z
 Environment=DOCKER_HOST=unix:///run/podman/podman.sock
 Exec=forgejo-runner daemon --config /data/runner-config.yml
+Network=host
 PodmanArgs=--pull=newer --userns=keep-id
 
 [Install]
