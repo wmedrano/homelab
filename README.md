@@ -74,3 +74,16 @@ systemctl --user status forgejo_actions_runner   # status
 podman logs forgejo_actions_runner               # logs
 systemctl --user restart forgejo_actions_runner  # restart
 ```
+
+## Networking
+
+IPv4 connectivity from the host to its own public services can break due to **NAT hairpin failure** — the host cannot reach its own public IPv4 address through the router's NAT. The fix is local DNS overrides in `/etc/hosts` that point each domain to `127.0.0.1` (and `::1` for IPv6 loopback), bypassing the broken hairpin route.
+
+- The `/etc/hosts` entries are installed idempotently by `init-prerequisites.sh` (step 6).
+- The Forgejo runner uses **host networking** (`network: "host"`, PR #21) so job containers share the host network stack and benefit from the same `/etc/hosts` overrides.
+
+Validate after running `init-prerequisites.sh`:
+
+```bash
+curl -4 --connect-timeout 5 -s -o /dev/null -w "%{http_code}\n" https://git.wmedrano.dev/
+```

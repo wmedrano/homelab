@@ -58,7 +58,7 @@ cache:
   external_server: ""
 
 container:
-  network: ""
+  network: "host"
   enable_ipv6: false
   options: ""
   workdir_parent: /data/workspace
