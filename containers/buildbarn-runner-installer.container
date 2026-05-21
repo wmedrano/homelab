@@ -1,0 +1,16 @@
+# BuildBarn Runner Installer
+#
+# Ephemeral container that copies the bb_runner binary into the
+# shared /bb volume so the runner container can use it.
+# This container exits immediately after copying the binary.
+#
+# The buildbarn-runner service waits for this to complete before starting.
+
+[Container]
+Image=ghcr.io/buildbarn/bb-runner-installer:20260326T163248Z-e6ab874
+ContainerName=buildbarn-runner-installer
+Volume=buildbarn-bb:/bb
+PodmanArgs=--pull=newer
+
+[Install]
+WantedBy=default.target

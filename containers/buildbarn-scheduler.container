@@ -1,0 +1,25 @@
+# BuildBarn Scheduler
+#
+# Dispatches build actions to workers and exposes:
+#   - 8982: gRPC client endpoint (used by the storage frontend)
+#   - 8983: gRPC worker endpoint (used by bb_worker instances)
+#   - 8984: gRPC build queue state endpoint
+#   - 7982: HTTP admin/metrics endpoint
+#
+# The JSONnet config (/config/scheduler.jsonnet) is mounted from
+# the buildbarn-config named volume.
+
+[Container]
+Image=ghcr.io/buildbarn/bb-scheduler:20260326T163248Z-e6ab874
+ContainerName=buildbarn-scheduler
+Network=buildbarn.network
+Volume=buildbarn-config:/config:ro
+Exec=/config/scheduler.jsonnet
+PublishPort=8982:8982
+PublishPort=8983:8983
+PublishPort=8984:8984
+PublishPort=7982:7982
+PodmanArgs=--pull=newer
+
+[Install]
+WantedBy=default.target

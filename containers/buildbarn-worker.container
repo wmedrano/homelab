@@ -1,0 +1,25 @@
+# BuildBarn Worker (hardlinking mode)
+#
+# Pulls build actions from the scheduler and executes them locally.
+# Uses hardlinking mode (no FUSE required, no --privileged needed)
+# which is compatible with rootless Podman.
+#
+# Shares the /worker volume with buildbarn-runner for:
+#   - Unix socket at /worker/runner (worker -> runner gRPC)
+#   - Build directory /worker/build (hardlinked input files)
+#   - Cache directory /worker/cache
+#
+# The JSONnet config (/config/worker.jsonnet) is mounted from
+# the buildbarn-config named volume.
+
+[Container]
+Image=ghcr.io/buildbarn/bb-worker:20260326T163248Z-e6ab874
+ContainerName=buildbarn-worker
+Network=buildbarn.network
+Volume=buildbarn-config:/config:ro
+Volume=buildbarn-worker:/worker
+Exec=/config/worker.jsonnet
+PodmanArgs=--pull=newer --userns=keep-id
+
+[Install]
+WantedBy=default.target

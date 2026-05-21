@@ -1,0 +1,27 @@
+# BuildBarn Runner (siso-chromium execution environment)
+#
+# Executes build actions pulled by the worker. Runs inside the
+# siso-chromium container image which contains the Chromium build
+# toolchain (clang, ninja, etc.).
+#
+# Waits for the runner-installer to place bb_runner at /bb/bb_runner,
+# then starts it with the runner config.
+#
+# Network is disabled (network_mode: none equivalent) - the runner
+# does not need network access as it only receives work via the
+# shared unix socket at /worker/runner.
+#
+# Shares /worker volume with buildbarn-worker for the unix socket,
+# build directory, and cache.
+
+[Container]
+Image=gcr.io/chops-public-images-prod/rbe/siso-chromium/linux@sha256:d7cb1ab14a0f20aa669c23f22c15a9dead761dcac19f43985bf9dd5f41fbef3a
+ContainerName=buildbarn-runner
+Volume=buildbarn-config:/config:ro
+Volume=buildbarn-bb:/bb
+Volume=buildbarn-worker:/worker
+Exec=sh -c "while ! test -f /bb/installed; do sleep 1; done; exec /bb/bb_runner /config/runner.jsonnet"
+PodmanArgs=--pull=newer --network none --userns=keep-id
+
+[Install]
+WantedBy=default.target

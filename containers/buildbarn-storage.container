@@ -1,0 +1,24 @@
+# BuildBarn Storage Backend
+#
+# Stores CAS blobs, action cache entries, and file system access cache
+# on local block-device-backed storage. Serves data to the frontend
+# on port 8981 via gRPC.
+#
+# Data is persisted in named volumes at /storage-cas, /storage-ac, /storage-fsac.
+# For single-machine setups we run one storage instance (no sharding).
+# No authentication (insecure) for homelab use.
+
+[Container]
+Image=ghcr.io/buildbarn/bb-storage:20260326T151518Z-d0c6f26
+ContainerName=buildbarn-storage
+Network=buildbarn.network
+Volume=buildbarn-config:/config:ro
+Volume=buildbarn-storage-cas:/storage-cas
+Volume=buildbarn-storage-ac:/storage-ac
+Volume=buildbarn-storage-fsac:/storage-fsac
+Exec=/config/storage.jsonnet
+PublishPort=8981:8981
+PodmanArgs=--pull=newer
+
+[Install]
+WantedBy=default.target

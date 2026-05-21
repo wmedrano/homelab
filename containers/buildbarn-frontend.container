@@ -1,0 +1,19 @@
+# BuildBarn Storage Frontend
+#
+# The RBE API endpoint that clients connect to. Proxies requests to
+# the storage backend and scheduler.
+#
+# Exposes port 8980 for gRPC (CAS, Action Cache, Execution APIs).
+# No authentication (insecure mode) for homelab SSH-tunnel access.
+
+[Container]
+Image=ghcr.io/buildbarn/bb-storage:20260326T151518Z-d0c6f26
+ContainerName=buildbarn-frontend
+Network=buildbarn.network
+Volume=buildbarn-config:/config:ro
+Exec=/config/frontend.jsonnet
+PublishPort=8980:8980
+PodmanArgs=--pull=newer
+
+[Install]
+WantedBy=default.target
